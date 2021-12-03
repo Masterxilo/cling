@@ -1,0 +1,15 @@
+#!/bin/bash
+. ./lib
+
+TARGET_BIN_BASE_FOLDER='/bin'
+FULL_PATH="$(realpath "$1")"
+BINARY_NAME="$(basename "${FULL_PATH}")"
+
+echo "Creating link to binary ${BINARY_NAME} at ${FULL_PATH}..."
+
+sudo ln --force --symbolic "${FULL_PATH}" "${TARGET_BIN_BASE_FOLDER}/${BINARY_NAME}"
+
+# visualize result
+ls -l "${TARGET_BIN_BASE_FOLDER}/${BINARY_NAME}"
+which "${BINARY_NAME}"
+

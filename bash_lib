@@ -1,0 +1,119 @@
+#!/bin/bash
+
+# usage
+#   . ./src/bash/bash_lib/set-bash-strict-mode-with-err-trap.sh
+
+
+# set-bash-strict-mode
+# set -euo pipefail
+# which is equivalent to
+set -o errexit
+set -o nounset
+set -o pipefail
+IFS=$'\n\t'
+# ^^ http://redsymbol.net/articles/unofficial-bash-strict-mode/
+
+function format-log {
+    local LEVEL="$1"
+    local FILE="$2"
+    local LINE="$3"
+    shift 3
+
+    local FORMATTED_LEVEL
+    FORMATTED_LEVEL=$(printf %-6s "$LEVEL")
+
+    local FORMATTED_FILELINE
+    FORMATTED_FILELINE=$(printf %-40s "$FILE:$LINE")
+    # FORMATTED_FILELINE="$FILE:$LINE"
+
+    echo "$FORMATTED_LEVEL $FORMATTED_FILELINE: " "$@"
+}
+
+function format-log-error {
+    local FILE="$1"
+    local LINE="$2"
+    shift 2
+
+    local ANSI_ESCAPE_CHANGE_TO_ERROR_COLOR
+    ANSI_ESCAPE_CHANGE_TO_ERROR_COLOR="$(TERM=xterm-256color tput sgr0)$(TERM=xterm-256color tput setaf 1)"
+    local ANSI_ESCAPE_CHANGE_TO_NORMAL_COLOR
+    ANSI_ESCAPE_CHANGE_TO_NORMAL_COLOR="$(TERM=xterm-256color tput sgr0)"
+
+    echo "$ANSI_ESCAPE_CHANGE_TO_ERROR_COLOR$(format-log "ERROR" "$FILE" "$LINE" "$@")$ANSI_ESCAPE_CHANGE_TO_NORMAL_COLOR"
+}
+
+function first {
+    echo "$1"
+}
+
+function second {
+    echo "$2"
+}
+
+# usage:
+#   log-error message1 message2 message3 ...
+function log {
+    # note: if IFS would contain ' ', explicit tr would not be necessary!
+    # CALLER=$(caller)
+    local CALLER
+    CALLER=$(caller | tr ' ' '\n')
+
+    # echo "log caller '$CALLER', first $( first $CALLER )"
+
+    # SC2086: Double quote to prevent globbing and word splitting. --> we WANT to split $CALLER!
+
+    local LINE
+    # shellcheck disable=SC2086
+    LINE=$( first $CALLER )
+
+    local FILE
+    # shellcheck disable=SC2086
+    FILE=$( second $CALLER )
+
+    format-log "INFO" "$FILE" "$LINE" "$@" >&1
+}
+
+# usage:
+#   log-error message1 message2 message3 ...
+function log-error {
+    # note: if IFS would contain ' ', explicit tr would not be necessary!
+    # CALLER=$(caller)
+    local CALLER
+    CALLER=$(caller | tr ' ' '\n')
+
+    # SC2086: Double quote to prevent globbing and word splitting.
+
+    local LINE
+    # shellcheck disable=SC2086
+    LINE=$( first $CALLER )
+
+    local FILE
+    # shellcheck disable=SC2086
+    FILE=$( second $CALLER )
+
+    format-log-error "$FILE" "$LINE" "$@" >&2
+}
+
+function on_err_trap {
+    CALLING_FILE="$1"
+    CALLING_LINENO="$2"
+    EXITCODE="$3"
+
+    if test "$EXITCODE" != "0" ; then
+        format-log-error "$CALLING_FILE" "$CALLING_LINENO" "produced nonzero exit code $EXITCODE - terminating" >&2
+    fi
+}
+trap 'on_err_trap "'"$0"'" "$LINENO" "$?"' ERR
+
+
+function create_link {
+    local FROM
+    FROM="$1"
+    local TO
+    TO="$2"
+
+    ls "$FROM" > /dev/null
+    if ! test -e "$TO" && ! test -f "$TO" && ! test -d "$TO" ; then
+        ln --symbolic "$FROM" "$TO" &> /dev/null || true
+    fi
+}
