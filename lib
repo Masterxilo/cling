@@ -6,5 +6,7 @@ which sudo || apt-get install -y sudo
 which wget || sudo apt-get install -y wget
 #which 7z || sudo apt-get install -y p7zip
 which unar || sudo apt-get install -y unar
+
+# need essential libraries, otherwise even #include <new>, apparently executed when cling starts, fails!
 which gcc g++ || sudo apt-get install -y build-essential
 ) >&2
