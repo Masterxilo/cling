@@ -14,5 +14,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag masterxilo/cling
+    
+    - name: Push the Docker image
+      env:
+        MASTERXILO_DOCKER_IO_PASSWORD: ${{ secrets.MASTERXILO_DOCKER_IO_PASSWORD }}
+      run: docker login --username masterxilo --password "$MASTERXILO_DOCKER_IO_PASSWORD" docker.io && docker push masterxilo/cling
