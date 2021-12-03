@@ -4,4 +4,8 @@
 ./build.sh
 
 #  --volume /:/host 
-docker run --rm --interactive --tty masterxilo/cling
+sudo docker run --rm --interactive --tty masterxilo/cling
+
+# or
+# something1-exec1-install cling
+# cling

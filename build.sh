@@ -5,4 +5,6 @@ tag='masterxilo/cling'
 
 sudo docker build --tag $tag .
 
-# sudo docker push $tag
+# docker-login
+# then:
+# sudo docker push masterxilo/cling
