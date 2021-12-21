@@ -1,2 +1,3 @@
 cling*.*
 cling*/
+!cling-help.sh
