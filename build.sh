@@ -3,7 +3,7 @@
 
 tag='masterxilo/cling'
 
-sudo docker build --tag $tag .
+sudo docker build --tag $tag . || sudo docker build --no-cache --tag $tag .
 
 # docker-login
 # then:
