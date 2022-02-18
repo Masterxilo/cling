@@ -20,3 +20,4 @@ jobs:
     
     - name: Push the Docker image
       run: echo ${{ secrets.MASTERXILO_DOCKER_IO_PASSWORD }} | docker login --username masterxilo --password-stdin docker.io && docker push masterxilo/cling && docker logout
+
