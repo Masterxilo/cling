@@ -16,8 +16,8 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Build the Docker image
-      run: ( docker pull masterxilo/cling || true ) && docker build . --file Dockerfile --tag masterxilo/cling --cache-from masterxilo/cling
+      run: ( docker pull paulfrischknecht/cling || true ) && docker build . --file Dockerfile --tag paulfrischknecht/cling --cache-from paulfrischknecht/cling
     
     - name: Push the Docker image
-      run: echo ${{ secrets.MASTERXILO_DOCKER_IO_PASSWORD }} | docker login --username masterxilo --password-stdin docker.io && docker push masterxilo/cling && docker logout
+      run: echo ${{ secrets.PAULFRISCHKNECHT_DOCKER_IO_PASSWORD }} | docker login --username paulfrischknecht --password-stdin docker.io && docker push paulfrischknecht/cling && docker logout
 
