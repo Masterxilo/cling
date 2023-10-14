@@ -19,5 +19,5 @@ jobs:
       run: ( docker pull paulfrischknecht/cling || true ) && docker build . --file Dockerfile --tag paulfrischknecht/cling --cache-from paulfrischknecht/cling
     
     - name: Push the Docker image
-      run: echo ${{ secrets.PAULFRISCHKNECHT_DOCKER_IO_PASSWORD }} | docker login --username paulfrischknecht --password-stdin docker.io && docker push paulfrischknecht/cling && docker logout
+      run: echo "${{ secrets.PAULFRISCHKNECHT_DOCKER_IO_PASSWORD }}" | docker login --username paulfrischknecht --password-stdin docker.io && docker push paulfrischknecht/cling && docker logout
 
